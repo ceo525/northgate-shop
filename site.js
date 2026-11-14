@@ -6,6 +6,25 @@
   var sel = document.getElementById('country');
   var buys = document.querySelectorAll('[data-buy]');
   if (!sel || !buys.length) return;
+  // Gift deadline per country (EN-23): Prodigi's recommended last order date for Christmas delivery
+  // (prodigi.com/christmas-delivery-dates, fine art prints global), used only where a Budget quote to that country
+  // uses the same lab and carrier as the published row; minus 2 days margin. US: USPS Ground Advantage 17 Dec
+  // (about.usps.com 2026 release) minus Prodigi's 5-day US gap, 2 days UPS Mail Innovations induction, 2 days margin.
+  // Countries without a sourced date get no line until every cut-off has passed. Evidence: engineer\en23\match_log.txt
+  var GIFT = {"AO":"2026-12-09","AR":"2026-12-12","AU":"2026-12-11","AW":"2026-12-12","AZ":"2026-12-11","BF":"2026-12-09","BJ":"2026-12-09","BN":"2026-12-11","BO":"2026-12-12","BR":"2026-12-12","BT":"2026-12-11","BW":"2026-12-09","CA":"2026-12-13","CD":"2026-12-09","CF":"2026-12-09","CG":"2026-12-09","CI":"2026-12-09","CL":"2026-12-12","CM":"2026-12-09","CO":"2026-12-12","CV":"2026-12-09","CW":"2026-12-12","DJ":"2026-12-09","EC":"2026-12-12","ER":"2026-12-09","ET":"2026-12-09","FK":"2026-12-12","GA":"2026-12-09","GB":"2026-12-13","GF":"2026-12-12","GM":"2026-12-09","GN":"2026-12-09","GQ":"2026-12-09","GW":"2026-12-09","GY":"2026-12-12","IL":"2026-12-12","KG":"2026-12-11","KH":"2026-12-09","KM":"2026-12-09","KZ":"2026-12-11","LA":"2026-12-11","LK":"2026-12-11","MA":"2026-12-09","MC":"2026-12-13","MG":"2026-12-09","MM":"2026-12-11","MN":"2026-12-11","MR":"2026-12-09","MV":"2026-12-05","MW":"2026-12-09","MZ":"2026-12-09","NA":"2026-12-09","NZ":"2026-12-04","PE":"2026-12-12","PY":"2026-12-12","RE":"2026-12-09","RW":"2026-12-09","SC":"2026-12-09","SL":"2026-12-09","SN":"2026-12-09","SR":"2026-12-12","TD":"2026-12-09","TG":"2026-12-09","TJ":"2026-12-11","TM":"2026-12-11","TT":"2026-12-12","TZ":"2026-12-09","UG":"2026-12-09","US":"2026-12-08","UY":"2026-12-12","UZ":"2026-12-11","VE":"2026-12-12"};
+  var GIFT_LAST = Object.keys(GIFT).map(function (c) { return GIFT[c]; }).sort().pop();
+  var gifts = document.querySelectorAll('[data-gift]');
+  function iso(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+  function giftLine(c) {
+    var today = iso(new Date()), d = GIFT[c];
+    if (today >= '2026-12-25') return '';
+    if (d && today <= d) {
+      var day = new Date(d + 'T12:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+      return 'Gift deadline: order by ' + day + ' for Christmas';
+    }
+    if ((d && today > d) || today > GIFT_LAST) return 'Ships worldwide; arrives after Christmas';
+    return '';
+  }
   var names = window.Intl && Intl.DisplayNames ? new Intl.DisplayNames([navigator.language || 'en'], { type: 'region' }) : null;
   var opts = Object.keys(ZONE).map(function (c) {
     var n = c; try { n = names ? names.of(c) : c; } catch (err) {}
@@ -22,6 +41,8 @@
       b.setAttribute('aria-label', lead + b.getAttribute('data-name') + ', $' + b.getAttribute('data-price') + (cost ? ' plus $' + cost + ' shipping' : ', shipping included'));
     });
     Array.prototype.forEach.call(ships, function (s) { s.textContent = cost ? '+ $' + cost + ' shipping' : 'Shipping included'; });
+    var g = giftLine(sel.value);
+    Array.prototype.forEach.call(gifts, function (p) { p.textContent = g; p.hidden = !g; });
   }
   var guess = (navigator.languages || [navigator.language || '']).map(function (l) { var m = /-([A-Za-z]{2})$/.exec(l); return m && m[1].toUpperCase(); }).filter(function (c) { return c && ZONE[c]; })[0];
   if (guess) sel.value = guess;
