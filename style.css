@@ -189,3 +189,10 @@ p { margin: 0 0 1em; }
 @media (prefers-reduced-motion: no-preference) {
   .btn, .plate img { transition: background-color .2s, border-color .2s, color .2s; }
 }
+
+/* shipping-zone picker */
+.ship-to { display: flex; flex-direction: column; gap: .35rem; margin: 0 0 1rem; font-family: var(--mono); font-size: .74rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
+.ship-to[hidden], .other-regions[hidden] { display: none; }
+.ship-to select { min-height: 48px; padding: 0 .8rem; border: 1.5px solid var(--line); background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 1rem; letter-spacing: 0; text-transform: none; border-radius: 0; width: 100%; }
+.ship-to select:focus-visible { outline: 2px solid var(--rust); outline-offset: 2px; }
+.other-regions { font-family: var(--sans); font-size: .85rem; color: var(--ink-soft); margin: -.8rem 0 1.6rem; }
