@@ -152,6 +152,8 @@ p { margin: 0 0 .8em; }
 .gift li { padding: 8px 0; border-top: 1px solid var(--reseau); font-size: 15px; }
 .gift li a { font-weight: 700; }
 .gift .small { color: var(--haze); font-size: 14px; margin: 0; }
+.gift .ship-to { margin-bottom: 10px; }
+.gift .btn { margin: 4px 0 10px; }
 
 /* Reason, flagship, wings, facts */
 .reason { padding-top: clamp(48px, 7vw, 96px); padding-bottom: clamp(32px, 5vw, 64px); }

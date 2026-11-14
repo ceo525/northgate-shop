@@ -32,12 +32,20 @@
   }).sort(function (a, b) { return a[0].localeCompare(b[0]); });
   opts.forEach(function (o) { var op = document.createElement('option'); op.value = o[1]; op.textContent = o[0]; sel.appendChild(op); });
   var ships = document.querySelectorAll('[data-ship]');
+  // EN-30 pair: the two chosen plates ride along as client_reference_id (letters, digits, - and _ only).
+  var picks = document.querySelectorAll('[data-pair-pick]');
+  function pairRef() {
+    var v = Array.prototype.map.call(picks, function (p) { return p.value; });
+    return v.length === 2 && v.every(function (s) { return /^[a-z0-9-]{1,60}$/.test(s); }) ? v.join('__') : '';
+  }
   function apply() {
     var z = ZONE[sel.value] || 1;
     var cost = z === 1 ? 0 : +sel.getAttribute('data-z' + z + 'ship');
     Array.prototype.forEach.call(buys, function (b) {
       b.href = b.getAttribute('data-z' + z);
-      var lead = b.classList.contains('buy') ? 'Buy ' : 'Buy this plate, ';
+      var pair = b.hasAttribute('data-pair'), ref = pair ? pairRef() : '';
+      if (ref) b.href += '?client_reference_id=' + ref;
+      var lead = b.classList.contains('buy') || pair ? 'Buy ' : 'Buy this plate, ';
       b.setAttribute('aria-label', lead + b.getAttribute('data-name') + ', $' + b.getAttribute('data-price') + (cost ? ' plus $' + cost + ' shipping' : ', shipping included'));
     });
     Array.prototype.forEach.call(ships, function (s) { s.textContent = cost ? '+ $' + cost + ' shipping' : 'Shipping included'; });
@@ -47,6 +55,7 @@
   var guess = (navigator.languages || [navigator.language || '']).map(function (l) { var m = /-([A-Za-z]{2})$/.exec(l); return m && m[1].toUpperCase(); }).filter(function (c) { return c && ZONE[c]; })[0];
   if (guess) sel.value = guess;
   sel.addEventListener('change', apply);
+  Array.prototype.forEach.call(picks, function (p) { p.addEventListener('change', apply); });
   sel.closest('.ship-to').hidden = false;
   var other = document.querySelector('.other-regions');
   if (other) other.hidden = true;
