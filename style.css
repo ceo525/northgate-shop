@@ -153,6 +153,7 @@ p { margin: 0 0 .8em; }
 .gift li a { font-weight: 700; }
 .gift .small { color: var(--haze); font-size: 14px; margin: 0; }
 .gift .ship-to { margin-bottom: 10px; }
+.gift .ship-to label { min-width: 7.5em; }
 .gift .btn { margin: 4px 0 10px; }
 
 /* Reason, flagship, wings, facts */
