@@ -2,9 +2,11 @@
 // each event only adds 1 to a public tally at abacus.jasoncameron.dev (namespace ceo525).
 // Keys: <site>-view-<page> on load, <site>-buy-<offer> when a Stripe link is clicked.
 // The script tag carries data-site and data-page; the click is never delayed (fire-and-forget).
+// Our own checks are not counted: ?nt=1 in the URL, or an automated browser (navigator.webdriver).
 (function () {
   var me = document.currentScript;
   if (!me) return;
+  if (/[?&]nt=1(&|$)/.test(location.search) || navigator.webdriver) return;
   var site = me.getAttribute('data-site'), page = me.getAttribute('data-page');
   if (!site || !page) return;
   var BASE = 'https://abacus.jasoncameron.dev/hit/ceo525/';
