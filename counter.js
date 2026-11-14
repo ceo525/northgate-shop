@@ -24,6 +24,7 @@
   }
   function offer(a) {
     if (site === 'leo') return LEO[a.pathname.replace(/^\//, '')] || 'other';
+    if (a.getAttribute('data-offer')) return a.getAttribute('data-offer'); // WD-26: hero buy and pair outside a card
     var card = a.closest('.card'); // Northgate home: the plate is the card the Buy sits in
     var link = card && card.querySelector('h3 a[href$=".html"]');
     return link ? link.getAttribute('href').replace(/\.html$/, '') : page;
